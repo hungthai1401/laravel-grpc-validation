@@ -5,7 +5,7 @@ namespace HT\GrpcValidation;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-class Validation
+final class Validation
 {
     /**
      * Create a new validation attribute instance.
@@ -13,9 +13,9 @@ class Validation
      * @param array|string $rules
      */
     public function __construct(
-        public array $rules = [],
-        public array $messages = [],
-        public string $formRequest = '',
+        public readonly array $rules = [],
+        public readonly array $messages = [],
+        public readonly string $formRequest = '',
     ) {
     }
 }
