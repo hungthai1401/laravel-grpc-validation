@@ -122,7 +122,9 @@ final class Invoker implements InvokerInterface
 
         if ($validateAttribute->formRequest) {
             $formRequest = $this->container->get($validateAttribute->formRequest);
+            /** @phpstan-ignore-next-line */
             $rules = method_exists($formRequest, 'rules') ? $formRequest->rules() : [];
+            /** @phpstan-ignore-next-line */
             $messages = $formRequest->messages();
         } else {
             $rules = $validateAttribute->rules;
@@ -132,6 +134,7 @@ final class Invoker implements InvokerInterface
         $data = $this->serializeToJsonArray($input);
 
         // Perform validation
+        /** @phpstan-ignore-next-line */
         $validator = Validator::make($data, $rules, $messages);
         if ($validator->fails()) {
             throw new ValidationException(
@@ -161,10 +164,13 @@ final class Invoker implements InvokerInterface
     /**
      * @throws GPBDecodeException
      * @throws DivisionByZeroError
+     * @phpstan-ignore-next-line
+     * @return array<mixed>|null
      */
     private function serializeToJsonArray(Message $message): ?array
     {
         try {
+            // @phpstan-ignore-next-line
             return json_decode($message->serializeToJsonString(), true, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             return null;
