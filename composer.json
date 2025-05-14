@@ -1,0 +1,31 @@
+{
+    "name": "hungthai1401/laravel-grpc-validation",
+    "description": "gRPC Validation for Laravel",
+    "type": "library",
+    "require": {
+        "php": ">=8.0",
+        "illuminate/support": "^10.0|^11.0|^12.0",
+        "spiral/roadrunner-grpc": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "HT\\GrpcValidation\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "HT\\GrpcValidation\\ServiceProvider"
+            ]
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Thai Nguyen Hung",
+            "email": "hungthai1401.it@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
