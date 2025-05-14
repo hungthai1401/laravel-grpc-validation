@@ -2,6 +2,13 @@
     "name": "hungthai1401/laravel-grpc-validation",
     "description": "gRPC Validation for Laravel",
     "type": "library",
+     "authors": [
+        {
+            "name": "Thai Nguyen Hung",
+            "email": "hungthai1401.it@gmail.com"
+        }
+    ],
+    "license": "MIT",
     "require": {
         "php": ">=8.0",
         "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0",
@@ -11,7 +18,8 @@
         "phpunit/phpunit": "^9.5|^10.0",
         "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0",
         "dg/bypass-finals": "^1.9",
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^1.10",
+        "laravel/pint": "^1.22"
     },
     "autoload": {
         "psr-4": {
@@ -32,13 +40,20 @@
             ]
         }
     },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Thai Nguyen Hung",
-            "email": "hungthai1401.it@gmail.com"
-        }
-    ],
+    "scripts": {
+        "lint": [
+            "pint"
+        ],
+        "test:lint": [
+            "pint --test"
+        ],
+        "test:stan": [
+            "phpstan analyse"
+        ],
+        "test:unit": [
+            "phpunit"
+        ]
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }

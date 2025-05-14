@@ -12,6 +12,5 @@ final class MockMethod extends Method
         public readonly string $name = 'testMethod',
         public readonly string $inputType = 'TestInputType',
         public readonly string $outputType = 'TestOutputType',
-    ) {
-    }
+    ) {}
 }

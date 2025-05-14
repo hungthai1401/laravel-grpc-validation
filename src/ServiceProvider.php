@@ -17,9 +17,7 @@ class ServiceProvider extends BaseServiceProvider
     public function register()
     {
         // Register any necessary bindings or singletons here
-        $this->app->bind(InvokerInterface::class, function ($app) {
-            return new Invoker($app);
-        });
+        $this->app->bind(InvokerInterface::class, fn ($app) => new Invoker($app));
     }
 
     /**
@@ -27,7 +25,5 @@ class ServiceProvider extends BaseServiceProvider
      *
      * @return void
      */
-    public function boot()
-    {
-    }
+    public function boot() {}
 }

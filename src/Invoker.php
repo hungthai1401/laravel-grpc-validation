@@ -4,32 +4,35 @@ declare(strict_types=1);
 
 namespace HT\GrpcValidation;
 
+use BadFunctionCallException;
 use Google\Protobuf\Internal\Message;
 use HT\GrpcValidation\Exceptions\ValidationException;
-use HT\GrpcValidation\Validation;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Validator;
+use InvalidArgumentException;
 use JsonException;
+use ReflectionClass;
 use Spiral\RoadRunner\GRPC\ContextInterface;
+use Spiral\RoadRunner\GRPC\Exception\InvokeException;
+use Spiral\RoadRunner\GRPC\InvokerInterface;
 use Spiral\RoadRunner\GRPC\Method;
 use Spiral\RoadRunner\GRPC\ServiceInterface;
 use Spiral\RoadRunner\GRPC\StatusCode;
-use Spiral\RoadRunner\GRPC\InvokerInterface;
-use Spiral\RoadRunner\GRPC\Exception\InvokeException;
+use Throwable;
 
 final class Invoker implements InvokerInterface
 {
-    public function __construct(
-        private readonly Application $container,
-    ) {
-    }
-
     private const ERROR_METHOD_RETURN =
         'Method %s must return an object that instance of %s, ' .
         'but the result provides type of %s';
+
     private const ERROR_METHOD_IN_TYPE =
         'Method %s input type must be an instance of %s, ' .
         'but the input is type of %s';
+
+    public function __construct(
+        private readonly Application $container,
+    ) {}
 
     public function invoke(
         ServiceInterface $service,
@@ -52,7 +55,7 @@ final class Invoker implements InvokerInterface
 
         try {
             return $message->serializeToString();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             throw InvokeException::create($e->getMessage(), StatusCode::INTERNAL, $e);
         }
     }
@@ -60,14 +63,14 @@ final class Invoker implements InvokerInterface
     /**
      * Checks that the result from the GRPC service method returns the Message object.
      *
-     * @throws \BadFunctionCallException
+     * @throws BadFunctionCallException
      */
     private function assertResultType(Method $method, mixed $result): bool
     {
-        if (!$result instanceof Message) {
+        if (! $result instanceof Message) {
             $type = \get_debug_type($result);
 
-            throw new \BadFunctionCallException(
+            throw new BadFunctionCallException(
                 \sprintf(self::ERROR_METHOD_RETURN, $method->name, Message::class, $type),
             );
         }
@@ -77,6 +80,7 @@ final class Invoker implements InvokerInterface
 
     /**
      * Converts the input from the GRPC service method to the Message object.
+     *
      * @throws InvokeException
      */
     private function makeInput(Method $method, ?string $body): Message
@@ -93,7 +97,7 @@ final class Invoker implements InvokerInterface
             }
 
             return $in;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             throw InvokeException::create($e->getMessage(), StatusCode::INTERNAL, $e);
         }
     }
@@ -101,14 +105,11 @@ final class Invoker implements InvokerInterface
     /**
      * Validates the input using validation attributes.
      *
-     * @param ServiceInterface $service
-     * @param Method $method
-     * @param Message $input
      * @throws InvokeException
      */
     private function validateInput(ServiceInterface $service, Method $method, Message $input): void
     {
-        $reflectionClass = new \ReflectionClass($service);
+        $reflectionClass = new ReflectionClass($service);
         $reflectionMethod = $reflectionClass->getMethod($method->name);
 
         // Check for Validate attribute on method
@@ -117,7 +118,7 @@ final class Invoker implements InvokerInterface
             return;
         }
 
-        /** @var \HT\GrpcValidation\Validation $validateAttribute  */
+        /** @var \HT\GrpcValidation\Validation $validateAttribute */
         $validateAttribute = $attributes[0]->newInstance();
 
         if ($validateAttribute->formRequest) {
@@ -138,7 +139,7 @@ final class Invoker implements InvokerInterface
         $validator = Validator::make($data, $rules, $messages);
         if ($validator->fails()) {
             throw new ValidationException(
-               $validator->errors()->first(),
+                $validator->errors()->first(),
             );
         }
     }
@@ -147,13 +148,14 @@ final class Invoker implements InvokerInterface
      * Checks that the input of the GRPC service method contains the
      * Message object.
      *
-     * @param class-string $class
-     * @throws \InvalidArgumentException
+     * @param  class-string  $class
+     *
+     * @throws InvalidArgumentException
      */
     private function assertInputType(Method $method, string $class): bool
     {
-        if (!\is_subclass_of($class, Message::class)) {
-            throw new \InvalidArgumentException(
+        if (! \is_subclass_of($class, Message::class)) {
+            throw new InvalidArgumentException(
                 \sprintf(self::ERROR_METHOD_IN_TYPE, $method->name, Message::class, $class),
             );
         }
@@ -162,10 +164,12 @@ final class Invoker implements InvokerInterface
     }
 
     /**
+     * @return array<mixed>|null
+     *
      * @throws GPBDecodeException
      * @throws DivisionByZeroError
+     *
      * @phpstan-ignore-next-line
-     * @return array<mixed>|null
      */
     private function serializeToJsonArray(Message $message): ?array
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HT\GrpcValidation;
 
 use Attribute;
@@ -10,13 +12,12 @@ final class Validation
     /**
      * Create a new validation attribute instance.
      *
-     * @param array<string, mixed> $rules
-     * @param array<string, string> $messages
+     * @param  array<string, mixed>  $rules
+     * @param  array<string, string>  $messages
      */
     public function __construct(
         public readonly array $rules = [],
         public readonly array $messages = [],
         public readonly string $formRequest = '',
-    ) {
-    }
+    ) {}
 }

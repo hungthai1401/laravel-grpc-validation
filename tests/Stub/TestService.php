@@ -28,7 +28,7 @@ class TestService implements TestInterface
     )]
     public function Ping(ContextInterface $ctx, Message $in): Message
     {
-         return $in->setMsg('pong');
+        return $in->setMsg('pong');
     }
 
     #[Validation(
@@ -43,6 +43,6 @@ class TestService implements TestInterface
     )]
     public function Throw(ContextInterface $ctx, Message $in): Message
     {
-         return $in->setMsg('pong');
+        return $in->setMsg('pong');
     }
 }

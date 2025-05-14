@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HT\GrpcValidation\Tests;
 
 use HT\GrpcValidation\Exceptions\ValidationException;
 use HT\GrpcValidation\Invoker;
+use HT\GrpcValidation\Tests\Stub\MockMethod;
+use HT\GrpcValidation\Tests\Stub\TestService;
+use HT\GrpcValidation\Tests\Stub\ThrowFormRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Validator;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Spiral\RoadRunner\GRPC\ContextInterface;
-use HT\GrpcValidation\Tests\Stub\MockMethod;
-use HT\GrpcValidation\Tests\Stub\TestService;
-use HT\GrpcValidation\Tests\Stub\ThrowFormRequest;
 use Service\Message;
+use Spiral\RoadRunner\GRPC\ContextInterface;
 
 class InvokerTest extends TestCase
 {
@@ -22,7 +24,7 @@ class InvokerTest extends TestCase
         parent::tearDown();
     }
 
-    public function testInvokeSuccessWithoutValidation(): void
+    public function test_invoke_success_without_validation(): void
     {
         // Mock the Application container
         $app = Mockery::mock(Application::class);
@@ -36,9 +38,9 @@ class InvokerTest extends TestCase
         $method = new MockMethod(
             name: 'Echo',
         );
-        
+
         $ctx = Mockery::mock(ContextInterface::class);
-        
+
         // Use custom MockInput and MockOutput
         $input = new Message();
 
@@ -50,9 +52,9 @@ class InvokerTest extends TestCase
         $this->assertEquals($actualOutput, $output->serializeToString());
     }
 
-    public function testInvokeSuccessWithValidation(): void
+    public function test_invoke_success_with_validation(): void
     {
-        /// Mock the Application container
+        // / Mock the Application container
         $app = Mockery::mock(Application::class);
         $app->shouldReceive('get')->andReturnNull();
 
@@ -71,9 +73,9 @@ class InvokerTest extends TestCase
         $method = new MockMethod(
             name: 'Ping',
         );
-        
+
         $ctx = Mockery::mock(ContextInterface::class);
-        
+
         // Use custom MockInput and MockOutput
         $input = new Message();
         $input->setMsg('pong');
@@ -87,9 +89,9 @@ class InvokerTest extends TestCase
         $this->assertEquals($actualOutput, $output->serializeToString());
     }
 
-    public function testInvokeFailsWithValidation(): void
+    public function test_invoke_fails_with_validation(): void
     {
-        /// Mock the Application container
+        // / Mock the Application container
         $app = Mockery::mock(Application::class);
         $app->shouldReceive('get')->andReturn(new ThrowFormRequest());
 
@@ -113,9 +115,9 @@ class InvokerTest extends TestCase
         $method = new MockMethod(
             name: 'Throw',
         );
-        
+
         $ctx = Mockery::mock(ContextInterface::class);
-        
+
         // Use custom MockInput and MockOutput
         $input = new Message();
         $input->setMsg('pong');
