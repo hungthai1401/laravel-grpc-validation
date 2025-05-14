@@ -39,7 +39,7 @@ return 0;
 Then you need to define your gRPC service methods with validation attributes. Here's an example:
 
 ```php
-use HT\GrpcValidation\Attributes\Validation;
+use HT\GrpcValidation\Validation;
 use GoodByeFormRequest;
 
 #[Validation(
