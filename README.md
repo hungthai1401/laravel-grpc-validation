@@ -13,20 +13,64 @@ A Laravel package for gRPC validation inspired by [friendsofhyperf/grpc-validati
 
 ## Installation
 
-[Instructions for installation will be added here once the package is ready for distribution.]
+You can install the package via Composer:
+
+```bash
+composer require hungthai1401/laravel-grpc-validation
+```
 
 ## Usage
 
-[Usage examples and documentation will be provided here as the package develops.]
+First of all, you need to set up your gRPC server.
 
-## Namespace
+```php
+$worker = Worker::create();
+$invoker = $this->container->make(Invoker::class);
+$server = new GrpcServer($invoker);
 
-The package uses the namespace `HT\GrpcValidation\` which maps to the `src/` directory.
+$server->registerService(..., ...);
+
+// The server will use the configuration from .rr.yaml or environment
+$server->serve($worker);
+
+return 0;
+```
+
+Then you need to define your gRPC service methods with validation attributes. Here's an example:
+
+```php
+use HT\GrpcValidation\Attributes\Validation;
+use GoodByeFormRequest;
+
+#[Validation(rules: [
+    'name' => 'required|string|max:10',
+    'message' => 'required|string|max:500',
+])]
+public function sayHello(HiUser $user) 
+{
+    $message = new HiReply();
+    $message->setMessage("Hello World");
+    $message->setUser($user);
+    return $message;
+}
+
+#[Validation(formRequest: GoodByeFormRequest::class)]
+public function sayGoodBye(GoodByeUser $user) 
+{
+    $message = new GoodByeReply();
+    $message->setMessage("Goodbye World");
+    $message->setUser($user);
+    return $message;
+}
+```
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request or open an Issue on GitHub.
 
-## License
+## Thanks
+- [Hyperf grpc-validation](https://github.com/friendsofhyperf/grpc-validation)
+- [Spiral Framework](https://spiral.dev/)
 
-[License information will be added here.]
+## License
+This package is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
