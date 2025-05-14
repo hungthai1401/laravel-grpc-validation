@@ -24,8 +24,10 @@ composer require hungthai1401/laravel-grpc-validation
 First of all, you need to set up your gRPC server.
 
 ```php
+use Spiral\RoadRunner\GRPC\InvokerInterface;
+
 $worker = Worker::create();
-$invoker = $this->container->make(Invoker::class);
+$invoker = $this->container->make(InvokerInterface::class);
 $server = new GrpcServer($invoker);
 
 $server->registerService(..., ...);
