@@ -14,10 +14,12 @@ final class Validation
      *
      * @param  array<string, mixed>  $rules
      * @param  array<string, string>  $messages
+     * @param  array<string, string>  $attributes
      */
     public function __construct(
         public readonly array $rules = [],
         public readonly array $messages = [],
+        public readonly array $attributes = [],
         public readonly string $formRequest = '',
     ) {}
 }

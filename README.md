@@ -42,10 +42,24 @@ Then you need to define your gRPC service methods with validation attributes. He
 use HT\GrpcValidation\Attributes\Validation;
 use GoodByeFormRequest;
 
-#[Validation(rules: [
-    'name' => 'required|string|max:10',
-    'message' => 'required|string|max:500',
-])]
+#[Validation(
+    rules: [
+        'name' => 'required|string|max:10',
+        'message' => 'required|string|max:500',
+    ],
+    messages: [
+        'name.required' => 'Name is required',
+        'name.string' => 'Name must be a string',
+        'name.max' => 'Name must not exceed 10 characters',
+        'message.required' => 'Message is required',
+        'message.string' => 'Message must be a string',
+        'message.max' => 'Message must not exceed 500 characters',
+    ],
+    attributes: [
+        'name' => 'Name',
+        'message' => 'Message',
+    ],
+)]
 public function sayHello(HiUser $user) 
 {
     $message = new HiReply();

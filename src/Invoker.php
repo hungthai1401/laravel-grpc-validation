@@ -124,19 +124,22 @@ final class Invoker implements InvokerInterface
         if ($validateAttribute->formRequest) {
             $formRequest = $this->container->get($validateAttribute->formRequest);
             /** @phpstan-ignore-next-line */
-            $rules = method_exists($formRequest, 'rules') ? $formRequest->rules() : [];
+            $rules = $formRequest->rules();
             /** @phpstan-ignore-next-line */
             $messages = $formRequest->messages();
+            /** @phpstan-ignore-next-line */
+            $attributes = $formRequest->attributes();
         } else {
             $rules = $validateAttribute->rules;
             $messages = $validateAttribute->messages;
+            $attributes = $validateAttribute->attributes;
         }
 
         $data = $this->serializeToJsonArray($input);
 
         // Perform validation
         /** @phpstan-ignore-next-line */
-        $validator = Validator::make($data, $rules, $messages);
+        $validator = Validator::make($data, $rules, $messages, $attributes);
         if ($validator->fails()) {
             throw new ValidationException(
                 $validator->errors()->first(),
